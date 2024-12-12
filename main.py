@@ -1,6 +1,9 @@
 import pygame
 import os
 
+#get fonts
+pygame.font.init()
+
 #set screen size and caption
 WIDTH = 900
 HEIGHT = 500
@@ -25,6 +28,10 @@ YELLOW = (255, 0, 0)
 #border
 BORDER = pygame.Rect((WIDTH//2)-5, 0, 10, HEIGHT)
 
+#fonts
+HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
+WINNER_FONT = pygame.font.SysFont('comicsans', 100)
+
 #pictures
 BRITNEY_OG_IMAGE = pygame.image.load(os.path.join('images', 'britney.png'))
 BRITNEY = pygame.transform.scale(BRITNEY_OG_IMAGE, (55, 40)) #resized
@@ -32,15 +39,30 @@ BRITNEY = pygame.transform.scale(BRITNEY_OG_IMAGE, (55, 40)) #resized
 XTINA_OG_IMAGE = pygame.image.load(os.path.join('images', 'xtina.png'))
 XTINA = pygame.transform.scale(XTINA_OG_IMAGE, (55, 40)) #resized
 
+LEOPARD = pygame.transform.scale(pygame.image.load(os.path.join('images','leopard.jpg')), (WIDTH, HEIGHT))
+
     
 
 #draws window
-def draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets):
-    WIN.fill(WHITE)
+def draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets, britney_health, xtina_health):
+    
+    #background and border
+    WIN.blit(LEOPARD, (0,0))
     pygame.draw.recy(WIN, BLACK, BORDER)
+    
+    #health stats
+    britney_health_text = HEALTH_FONT.render("Health: " + str(britney_health), 1, WHITE)
+    xtina_health_text = HEALTH_FONT.render("Health: " + str(xtina_health), 1, WHITE)
+    WIN.blit(britney_health, (10, 10))
+    WIN.blit(xtina_health, (WIDTH - xtina_health_text.get_width() - 10, 10))
+
+
+    #britney and christina
     WIN.blit(BRITNEY_OG_IMAGE, (britney_rect.x, britney_rect.y))
     WIN.blit(XTINA_OG_IMAGE, (xtina_rect.x, xtina_rect.y))
-    
+
+
+    #shoots bullets
     for bullets in britneys_bullets:
         pygame.draw.rect(WIN, YELLOW, bullet)
 
@@ -48,6 +70,12 @@ def draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets):
         pygame.draw.rect(WIN, RED, bullet)
 
     pygame.display.update()
+
+#someone wins the game
+def draw_winner():
+    draw_text = WINNER_FONT.render(text, 1, WHITE)
+    WIN.blit(draw_text, (WIDTH//2) - draw_text.get_width()//2, (HEIGHT//2 - draw_text.get_height//2))
+    pygame.time.delay(5000)
 
 #move britney
 def britney_movement(keys_pressed, britney_rect):
@@ -105,6 +133,9 @@ def main():
     britneys_bullets = []
     xtinas_bullets = []
 
+    britney_health = 10
+    xtina_health = 10 
+
     clock = pygame.time.Clock()
     run = True
 
@@ -125,6 +156,26 @@ def main():
                     bullet = pygame.Rect(xtina_rect.x, xtina_rect.y + xtina_rect.height//2 - 2, 10, 5)
                     xtinas_bullets.append(bullet) 
         
+            #health decreases if hit
+            if event.type == BRITNEY_HIT:
+                britney_health -= 1
+
+            if event.type == XTINA_HIT:
+                xtina_health -= 1
+        
+            #determining if someone has won
+            winner_text == ""
+
+            if britney_health <= 0:
+                winner_text = "CHRISTINA WINS"
+
+            if xtina_health <= 0:
+                winner_text = "BRITNEY WINS"
+
+            if winner_text != "":
+                draw_winner(winner_text)
+                break
+
         #britney and christina move on screen
         key_pressed = pygame.key.get_pressed()
         britney_movement(key_pressed, britney_rect)
@@ -134,8 +185,12 @@ def main():
         handles_bullets(britneys_bullets, xtinas_bullets, britney_rect, xtina_rect)
 
         #draw window
-        draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets)
+        draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets, britney_health, xtina_health)
         
     
     #loop ends, game quits
     pygame.quit()
+
+
+if __name__ == "__main__":
+    main()
