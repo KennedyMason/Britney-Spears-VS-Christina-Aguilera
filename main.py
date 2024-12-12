@@ -72,9 +72,11 @@ def draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets, brit
     pygame.display.update()
 
 #someone wins the game
-def draw_winner():
+def draw_winner(text):
     draw_text = WINNER_FONT.render(text, 1, WHITE)
+    space_text = WINNER_FONT.render("Press SPACE to play again.", 1, WHITE)
     WIN.blit(draw_text, (WIDTH//2) - draw_text.get_width()//2, (HEIGHT//2 - draw_text.get_height//2))
+    WIN.blit(space_text, (WIDTH//2) - space_text.get_width()//2, (HEIGHT//2 - space_text.get_height//2 - draw_text.get_height//2) )
     pygame.time.delay(5000)
 
 #move britney
@@ -146,6 +148,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.quit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL and len(britneys_bullets) < MAX_BULLETS:
@@ -174,7 +177,7 @@ def main():
 
             if winner_text != "":
                 draw_winner(winner_text)
-                break
+                run = False
 
         #britney and christina move on screen
         key_pressed = pygame.key.get_pressed()
@@ -187,9 +190,8 @@ def main():
         #draw window
         draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets, britney_health, xtina_health)
         
-    
-    #loop ends, game quits
-    pygame.quit()
+    if keys_pressed[pygame.K_SPACE]:
+        main()
 
 
 if __name__ == "__main__":
