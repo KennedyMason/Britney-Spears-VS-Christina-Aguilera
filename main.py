@@ -23,7 +23,6 @@ XTINA_HIT = pygame.USEREVENT + 1
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 RED = (255, 0, 0)
-YELLOW = (255, 0, 0)
 
 #border
 BORDER = pygame.Rect((WIDTH//2)-5, 0, 10, HEIGHT)
@@ -69,29 +68,30 @@ def draw_window(britney_rect, xtina_rect, britneys_bullets, xtinas_bullets, brit
     for bullets in xtinas_bullets:
         pygame.draw.rect(WIN, RED, bullets)
 
+
     pygame.display.update()
 
 #someone wins the game
 def draw_winner(text):
     draw_text = WINNER_FONT.render(text, 1, WHITE)
     space_text = WINNER_FONT.render("Press SPACE to play again.", 1, WHITE)
-    WIN.blit(draw_text, (WIDTH//2) - draw_text.get_width()//2, (HEIGHT//2 - draw_text.get_height//2))
-    WIN.blit(space_text, (WIDTH//2) - space_text.get_width()//2, (HEIGHT//2 - space_text.get_height//2 - draw_text.get_height//2) )
+    WIN.blit(draw_text, (WIDTH//2) - draw_text.get_width()//2, (HEIGHT//2 - draw_text.get_height()//2))
+    WIN.blit(space_text, (WIDTH//2) - space_text.get_width()//2, (HEIGHT//2 - space_text.get_height()//2 - draw_text.get_height()//2) )
     pygame.time.delay(5000)
 
 #move britney
 def britney_movement(keys_pressed, britney_rect):
     
-    if keys_pressed[pygame.K_a] and britney_rect.x - VEL + britney_rect.width > 50: #leftF
+    if keys_pressed[pygame.K_a] and britney_rect.x - VEL + britney_rect.width > 55: #leftF
         britney_rect.x -= VEL
 
-    if keys_pressed[pygame.K_d] and britney_rect.x + VEL + britney_rect.width < BORDER.x: #right
+    if keys_pressed[pygame.K_d] and britney_rect.x + VEL + britney_rect.width < BORDER.x + 5: #right
         britney_rect.x += VEL
 
-    if keys_pressed[pygame.K_w] and britney_rect.y - VEL > 0: #up
+    if keys_pressed[pygame.K_w] and britney_rect.y - VEL > -5: #up
         britney_rect.y -= VEL
 
-    if keys_pressed[pygame.K_s] and britney_rect.y - VEL + britney_rect.height < HEIGHT - 25: #down
+    if keys_pressed[pygame.K_s] and britney_rect.y - VEL + britney_rect.height < HEIGHT - 5: #down
         britney_rect.y += VEL
 
 #move xtina
@@ -100,13 +100,13 @@ def xtina_movement(keys_pressed, xtina_rect):
     if keys_pressed[pygame.K_LEFT] and xtina_rect.x - VEL > BORDER.x + BORDER.width//2: #left
         xtina_rect.x -= VEL
 
-    if keys_pressed[pygame.K_RIGHT] and xtina_rect.x + VEL + xtina_rect.width < WIDTH: #right
+    if keys_pressed[pygame.K_RIGHT] and xtina_rect.x + VEL + xtina_rect.width < WIDTH +5: #right
         xtina_rect.x += VEL
 
-    if keys_pressed[pygame.K_UP] and xtina_rect.y - VEL > 0: #up
+    if keys_pressed[pygame.K_UP] and xtina_rect.y - VEL > -5: #up
         xtina_rect.y -= VEL
 
-    if keys_pressed[pygame.K_DOWN] and xtina_rect.y - VEL + xtina_rect.height < HEIGHT - 25: #down
+    if keys_pressed[pygame.K_DOWN] and xtina_rect.y - VEL + xtina_rect.height < HEIGHT -5: #down
         xtina_rect.y += VEL
 
 #manages bullets
@@ -119,12 +119,13 @@ def handle_bullets(britneys_bullets, xtinas_bullets, britney_rect, xtina_rect):
         elif bullet.x > WIDTH:
             britneys_bullets.remove(bullet)
 
+    run_once = 0
     for bullet in xtinas_bullets:
         bullet.x -= BULLET_VEL
         if britney_rect.colliderect(bullet):
             pygame.event.post(pygame.event.Event(BRITNEY_HIT))
             xtinas_bullets.remove(bullet)
-        elif bullet.x < WIDTH:
+        elif bullet.x < 0:
             xtinas_bullets.remove(bullet)
 
 def main():
