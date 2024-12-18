@@ -37,19 +37,6 @@ def main():
 
             if event.type == game.XTINA_HIT:
                 game.xtina_health -= 1
-        
-            #determining if someone has won
-            winner_text = ""
-
-            if game.britney_health <= 0:
-                winner_text = "CHRISTINA WINS"
-
-            if game.xtina_health <= 0:
-                winner_text = "BRITNEY WINS"
-
-            if winner_text != "":
-                game.game_over(winner_text)
-                run = False
 
         #britney and christina move on screen
         key_pressed = pygame.key.get_pressed()
@@ -61,6 +48,19 @@ def main():
 
         #draw window
         game.draw_window()
+
+        #determining if someone has won
+        winner_text = ""
+
+        if game.britney_health <= 0:
+            winner_text = "CHRISTINA WINS"
+
+        if game.xtina_health <= 0:
+            winner_text = "BRITNEY WINS"
+
+        if winner_text != "":
+            game.game_over(winner_text)
+            run = False
         
     if game.game_over(winner_text ) == True:
         game.reset_game()
