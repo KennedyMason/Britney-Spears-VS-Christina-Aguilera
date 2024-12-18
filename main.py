@@ -48,7 +48,7 @@ def main():
                 winner_text = "BRITNEY WINS"
 
             if winner_text != "":
-                game.draw_winner(winner_text)
+                game.game_over(winner_text)
                 run = False
 
         #britney and christina move on screen
@@ -62,7 +62,8 @@ def main():
         #draw window
         game.draw_window()
         
-    if key_pressed[pygame.K_SPACE]:
+    if game.game_over(winner_text ) == True:
+        game.reset_game()
         main()
 
 

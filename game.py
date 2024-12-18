@@ -26,7 +26,7 @@ class Game:
         self.FPS = 60
 
         #bullets
-        self.MAX_BULLETS = 10
+        self.MAX_BULLETS = 3
         self.BULLET_VEL = 7
 
         #they get hit by bullets
@@ -40,7 +40,7 @@ class Game:
 
         #fonts
         self.HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
-        self.WINNER_FONT = pygame.font.SysFont('comicsans', 100)
+        self.WINNER_FONT = pygame.font.SysFont('comicsans', 40)
 
         #britney and xtina rectangles
         self.britney_rect = pygame.Rect(175, 250, 60, 60)
@@ -85,13 +85,7 @@ class Game:
         pygame.display.update()
 
     
-    #someone wins the game
-    def draw_winner(self, text):
-        draw_text = self.WINNER_FONT.render(text, 1, self.WHITE)
-        self.WIN.blit(draw_text, (self.WIDTH//2) - draw_text.get_width()//2, (self.HEIGHT//2 - draw_text.get_height()//2))
-        pygame.time.delay(5000)
-
-    
+   
     #move britney
     def britney_movement(self, keys_pressed):
         
@@ -141,3 +135,40 @@ class Game:
                 self.xtinas_bullets.remove(bullet)
             elif bullet.x < 0:
                 self.xtinas_bullets.remove(bullet)
+
+    
+    def game_over(self, winner):
+
+        draw_text = self.WINNER_FONT.render(winner, 1, self.WHITE)
+        self.WIN.blit(draw_text, (self.WIDTH//2 - draw_text.get_width()//2, self.HEIGHT//2 - draw_text.get_height()//2))
+
+        restart_text = self.WINNER_FONT.render("Press SPACE (Twice) to play again.", 1, self.WHITE)
+        self.WIN.blit(restart_text, (450 - restart_text.get_width()//2, 350))
+        pygame.display.update()
+
+        restart = False
+        while not restart:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        restart = True
+        return restart
+
+
+    def reset_game(self):
+        # Reset health
+        self.britney_health = 10
+        self.xtina_health = 10
+
+        # Reset character positions
+        self.britney_rect = pygame.Rect(175, 250, 60, 60)
+        self.xtina_rect = pygame.Rect(525, 250, 60, 60)
+
+        # Clear bullets
+        self.britneys_bullets = []
+        self.xtinas_bullets = []
+
+    
